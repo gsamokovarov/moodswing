@@ -7,6 +7,12 @@ task 'compile', 'Compiles the project to JS.', (options) ->
   options.to ?= 'lib/'
   sh "coffee -b -o #{options.to} -c src/"
 
+task 'test', 'Tests the library.', (options) ->
+  invoke 'compile'
+  puts "Testing..."
+
+  sh "coffee test/period.coffee"
+
 sh = (cmd) ->
   attach = (fn) ->
     if sh.last
