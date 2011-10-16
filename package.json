@@ -1,0 +1,7 @@
+{ 'name': 'moodswing'
+, 'description': 'Pain free testing framework, for that time of the software development.'
+, 'version': '0.1.0'
+, 'author': 'Genadi Samokovarov'
+, 'keywords': ['test', 'expect']
+, 'main': './lib/moodswing.js'
+}

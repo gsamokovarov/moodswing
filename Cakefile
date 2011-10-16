@@ -11,7 +11,7 @@ task 'test', 'Tests the library.', (options) ->
   invoke 'compile'
   puts "Testing..."
 
-  sh "coffee test/period.coffee"
+  sh "coffee test/moodswing.coffee"
 
 sh = (cmd) ->
   attach = (fn) ->
