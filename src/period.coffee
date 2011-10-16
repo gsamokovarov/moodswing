@@ -35,7 +35,7 @@ class Expectation
     assert.equal @target, other unless @negate
     assert.notEqual @target, other if @negate
     this
-  
+
   ###
   Assert @target to be an instance of `kind`.
   ###
@@ -80,7 +80,7 @@ class Expectation
     Expectation::[as] = Expectation::[name] for as in aliases
 )
   beEqual: ['beEqualOf', 'beEqualTo' , 'be']
-  beAnInstanceOf: ['beA']
+  beAnInstanceOf: ['beInstanceOf', 'beA']
   haveProperty: ['havePropertyOf', 'have']
   haveLength: ['haveLengthOf']
   raise: ['throw', 'throws']

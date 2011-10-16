@@ -14,7 +14,9 @@ test ->
   expect({length: 1}).to have: 'length'
   expect([]).to have: property: 'length'
   expect([]).to have: property: of: 'length'
-  expect([]).to have: length: 2
+  expect([]).to have: length: 0
+  expect([]).to have: length: of: 0
+  dontExpect({}).to have: property: 'length'
 
 test ->
   expect(-> throw Error).to raise: Error
@@ -23,3 +25,8 @@ test ->
   dontExpect(-> null).to raise: Error
   dontExpect(-> null).to throw: Error
   dontExpect(-> null).to throws: Error
+
+test ->
+  expect({}).to be: a: Object
+  expect({}).to be: instance: of: Object
+  expect({}).to be: an: instance: of: Object
