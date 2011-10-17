@@ -10,7 +10,7 @@
 
     # Expect...
 
-    expect(true).to be: false
+    expect(true).to be: true
     expect([]).to have: length: of: 0
     
     # Dont expect...
