@@ -1,7 +1,8 @@
-{ 'name': 'moodswing'
-, 'description': 'Pain free testing framework, for that time of the software development.'
-, 'version': '0.1.0'
-, 'author': 'Genadi Samokovarov'
-, 'keywords': ['test', 'expect']
-, 'main': './lib/moodswing.js'
+{ "name": "moodswing"
+, "description": "Node.js testing framework for that time of the software development cycle."
+, "version": "0.1.0"
+, "author": "Genadi Samokovarov <gsamokovarov@gmail.com>"
+, "keywords": ["test", "expect", "coffeescript"]
+, "main": "./lib/moodswing.js"
+, "repository": {"type": "git", "url": "git://github.com/gsamokovarov/moodswing.git"}
 }
