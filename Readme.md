@@ -29,7 +29,7 @@ The ``Expectation`` constructor is publicly available, so you can augment its pr
 
     # ...
 
-   expect(connectionHandler).to be: in: server: listeners: for: 'connection'
+    expect(connectionHandler).to be: in: server: listeners: for: 'connection'
 
 Installation
 ============
