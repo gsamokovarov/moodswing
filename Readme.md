@@ -7,3 +7,5 @@
     --------------------------------------------------------------------------
     Node.js testing framework for that time of the software development cycle.
     --------------------------------------------------------------------------
+
+For more information visit the [home page](http://gsamokovarov.github.com/moodswing).
