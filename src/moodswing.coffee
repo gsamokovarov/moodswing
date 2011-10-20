@@ -12,8 +12,8 @@
 # example the line ``expect([]).to have: length: of: 0`` is equal to the call
 # ``(new Expectation []).haveLengthOf(0)``.
 #
-# This means that the object ``have: length: of: 0``, which from now on I would
-# call a _directive_, is translated to a method named ``haveLengthOf`` using
+# This means that the object ``have: length: of: 0``, which we call a
+#  _directive_, is translated to a method named ``haveLengthOf`` using
 # camel case notation. This method is then looked for in the 
 # ``Expectation.prototype`` and is being called with the _reminder_ of the 
 # object.
@@ -38,7 +38,7 @@
 {inspect} = require 'util'
 # We use the standard `node` asserion module for most of our _low level_
 # assertions. This gives us the nice benefit to be able to run our tests on
-# (expresso)[http://visionmedia.github.com/expresso/].
+# [expresso](http://visionmedia.github.com/expresso/).
 assert = require 'assert'
 
 # ### Inernals
