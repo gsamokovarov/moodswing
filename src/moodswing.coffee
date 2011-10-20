@@ -1,69 +1,95 @@
-{inspect} = require 'util'
-assert = require 'assert'
-AssertionError = assert.AssertionError
+# **Moodswing** uses [CoffeeScript](http://jashkenas.github.com/coffee-script/)
+# to provide assertions which can look like english sentences.
+#
+#     expect(true).to be: true
+#     expect([]).to have: length: of: 0
+#     dontExpect(-> null).to raise: Error
+#     dontExpect('this').to be: equal: to: 'that'
+#
+# This is possible because of the
+# [CoffeeScript](http://jashkenas.github.com/coffee-script/) object
+# [literal](http://jashkenas.github.com/coffee-script/#literals) syntax. For
+# example the line ``expect([]).to have: length: of: 0`` is equal to the call
+# ``(new Expectation []).haveLengthOf(0)``.
+#
+# This means that the object ``have: length: of: 0``, which from now on I would
+# call a _directive_, is translated to a method named ``haveLengthOf`` using
+# camel case notation. This method is then looked for in the 
+# ``Expectation.prototype`` and is being called with the _reminder_ of the 
+# object.
+#
+# The ``Expectation`` constructor is publicly available, so you can augment its
+# prototype with your own directives.
+#
+# You can install moodswing through [NPM](http://npmjs.org)
+#
+#     npm install moodswing
+#
+# To use moodswing just require it in your tests
+#
+#     {expect, dontExpect, Expectations} = require 'moodswing'
+#
+# The code is available on [github](http://github.com/gsamokovarov/moodswing)
+# under MIT license. 
 
-###
-Primitive safe ``Object.keys`` implementation.
-###
+# ### Prerequisites
+
+# We use `inspect` for prettier object printings.
+{inspect} = require 'util'
+# We use the standard `node` asserion module for most of our _low level_
+# assertions. This gives us the nice benefit to be able to run our tests on
+# (expresso)[http://visionmedia.github.com/expresso/].
+assert = require 'assert'
+
+# ### Inernals
+
+# Primitive safe `Object.keys` implementation.
 keys = (something) ->
   Object.keys(Object something)
 
-###
-Takes the first object from an object or array.
-###
+# Takes the first object from an object or array named.
 first = (it) ->
   return it[0] if Array.isArray(it) or typeof it is 'string'
   it[keys(it)[0]]
 
-###
-Capitalizes the string `str`.
-###
+# Capitalizes a string.
 capitalize = (str) ->
   "#{str[0].toUpperCase()}#{str[1...]}"
 
-###
-The expectation object is responsible for the assertions behavior.
-###
+# ### Exports
+
+# The expectation object is responsible for the assertions behavior. All of the
+# assertions pointed by the directives are living in its constructor.
 class Expectation
   constructor: (@target, options = {}) ->
     @negate = options.negate or false
 
-  ###
-  Assert @target to be equal to `other` object.
-  ###
+  # Assert @target to be equal to `other` object.
   beEqual: (other) ->
     assert.equal @target, other unless @negate
     assert.notEqual @target, other if @negate
     this
 
-  ###
-  Assert @target to be an instance of `kind`.
-  ###
+  # Assert `@target` to be an instance of `kind`.
   beAnInstanceOf: (kind) ->
     unless @target instanceof kind
       assert.fail("Expected #{@target} to be an instance of #{kind}")
     this
 
-  ###
-  Assert @target have a property `name`.
-  ###
+  # Assert `@target` have a property `name`.
   haveProperty: (name) ->
     assert.notEqual undefined, @target[name] unless @negate
     assert.equal undefined, @target[name] if @negate
     this
 
-  ###
-  Assert @target have property `length` of `len`.
-  ###
+  # Assert `@target` have property `length` of `len`.
   haveLength: (len) ->
     @haveProperty 'length'
     assert.equal @target.length, len unless @negate
     assert.notEqual @target.length, len if @negate
     this
 
-  ###
-  Assert @target to raise an error of the kind.
-  ###
+  # Assert `@target` to raise an error of the kind.
   raise: (error) ->
     try
       @target()
@@ -74,7 +100,7 @@ class Expectation
         assert.fail("Unexpected error of #{error} kind.")
     this
 
-# Common aliases...
+# Creates some common aliases...
 (alias = (dict) ->
   for name, aliases of dict
     Expectation::[as] = Expectation::[name] for as in aliases
@@ -85,16 +111,12 @@ class Expectation
   haveLength: ['haveLengthOf']
   raise: ['throw', 'throws']
 
-###
-Provides the DSL like feel to the user.
-
-Examples::
-  # Will throw `AssertionError`.
-  expect(true).to :be: false
-
-  # Will run as expected.
-  dontExpect(true).to :be :false
-###
+# Parses a `directive` into a method call. Returns self if none given.
+#
+# A `directive` is an deep object of the kind ``be: equal: to: true`` which
+# points to a camel cased method and a parameter to call it with. Since there
+# can be more then one method matching a given `directive`, we will always call
+# the longest one we match.
 Expectation::to = (directive) ->
   # Supports ``expect(object).to().beEqual(another)``.
   return this unless directive?
@@ -119,20 +141,17 @@ Expectation::to = (directive) ->
 
   @[longest](possibilities[longest])
  
-###
-Provide public access for monkey patching.
-###
+# Provide public access for monkey patching.
 exports.Expectation = Expectation
 
-###
-Create an expectation for the `object`.
-###
-exports.expect = (object) ->
-  new exports.Expectation object
+# Create an expectation for the `target`. This is actually the main function
+# that we'll be using. The `target`
+exports.expect = (target) ->
+  new exports.Expectation target
 
-###
-Create an negated expectation for the `object`.
-###
-exports.dontExpect = (object) ->
-  new exports.Expectation object, negate: true
+# Create an negated expectation for the `target`. The second most used function
+# after `expect`.
+exports.dontExpect = (target) ->
+  new exports.Expectation target, negate: true
 
+# Have fun.

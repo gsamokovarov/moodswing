@@ -7,6 +7,12 @@ task 'compile', 'Compiles the project to JS.', (options) ->
   options.to ?= 'lib/'
   sh "coffee -b -o #{options.to} -c src/"
 
+task 'document', 'Uses docco to annotate the source', (options) ->
+  puts 'Documenting...'
+
+  sh "docco src/*.coffee"
+
+
 task 'test', 'Tests the library.', (options) ->
   invoke 'compile'
   puts "Testing..."
