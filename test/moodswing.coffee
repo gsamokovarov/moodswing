@@ -1,4 +1,5 @@
 {expect, dontExpect, Expectation} = require '../lib/moodswing'
+puts = console.log
 
 test = (fn) ->
   require('assert').doesNotThrow(fn)
@@ -21,9 +22,9 @@ test ->
   dontExpect({}).to have: property: of: 'length'
 
 test ->
-  expect(-> throw Error).to raise: Error
-  expect(-> throw Error).to throw: Error
-  expect(-> throw Error).to throws: Error
+  expect(-> throw new Error).to raise: Error
+  expect(-> throw new Error).to throw: Error
+  expect(-> throw new Error).to throws: Error
   dontExpect(-> null).to raise: Error
   dontExpect(-> null).to throw: Error
   dontExpect(-> null).to throws: Error

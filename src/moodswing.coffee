@@ -1,5 +1,5 @@
 # **Moodswing** uses [CoffeeScript](http://jashkenas.github.com/coffee-script/)
-# to provide assertions which can look like english sentences.
+# to provide assertions which can look like English sentences.
 #
 #     expect(true).to be: true
 #     expect([]).to have: length: of: 0
@@ -27,21 +27,24 @@
 #
 # To use moodswing just require it in your tests
 #
-#     {expect, dontExpect, Expectations} = require 'moodswing'
+#     {expect, dontExpect, Expectation} = require 'moodswing'
 #
 # The code is available on [github](http://github.com/gsamokovarov/moodswing)
 # under MIT license. 
 
 # ### Prerequisites
 
-# We use `inspect` for prettier object printings.
+# Require `inspect` for prettier object printings.
 {inspect} = require 'util'
-# We use the standard `node` asserion module for most of our _low level_
+# Require the standard [node](https://nodejs.org) assertion module for most of our _low level_
 # assertions. This gives us the nice benefit to be able to run our tests on
 # [expresso](http://visionmedia.github.com/expresso/).
 assert = require 'assert'
 
-# ### Inernals
+# ### Internal utilities
+
+# Before we begin we define some helpful utilities, which would be used
+# through the project implementation.
 
 # Primitive safe `Object.keys` implementation.
 keys = (something) ->
@@ -56,60 +59,65 @@ first = (it) ->
 capitalize = (str) ->
   "#{str[0].toUpperCase()}#{str[1...]}"
 
-# ### Exports
+# ### Public exports
+
+# Now we start to implement the portion that would be exported to the user.
 
 # The expectation object is responsible for the assertions behavior. All of the
-# assertions pointed by the directives are living in its constructor.
-class Expectation
+# assertions pointed by the directives are living in its prototype.
+class exports.Expectation
   constructor: (@target, options = {}) ->
     @negate = options.negate or false
 
-  # Assert @target to be equal to `other` object.
+  # Assert `@target` to be equal to `other` object.
   beEqual: (other) ->
-    assert.equal @target, other unless @negate
-    assert.notEqual @target, other if @negate
+    unless @negate
+      assert.equal @target, other
+    else
+      assert.notEqual @target, other
     this
 
   # Assert `@target` to be an instance of `kind`.
   beAnInstanceOf: (kind) ->
-    unless @target instanceof kind
-      assert.fail("Expected #{@target} to be an instance of #{kind}")
+    unless @negate
+      assert.ok @target instanceof kind, "Expected #{@target} to be an instance of #{kind}"
+    else
+      assert.ok !(@target instanceof kind), "Did not expected #{@target} to be and instance of #{kind}"
     this
 
   # Assert `@target` have a property `name`.
   haveProperty: (name) ->
-    assert.notEqual undefined, @target[name] unless @negate
-    assert.equal undefined, @target[name] if @negate
+    unless @negate
+      assert.ok @target[name]?, "Expected property #{name} in #{inspect @target}"
+    else
+      assert.ok not @target[name]?, "Did not expected a property #{name} in #{inspect @target}"
     this
 
   # Assert `@target` have property `length` of `len`.
   haveLength: (len) ->
     @haveProperty 'length'
-    assert.equal @target.length, len unless @negate
-    assert.notEqual @target.length, len if @negate
+    unless @negate
+      assert.equal @target.length, len
+    else
+      assert.notEqual @target.length, len
     this
 
-  # Assert `@target` to raise an error of the kind.
+  # Assert `@target` to raise an `error` of the kind.
   raise: (error) ->
     try
       @target()
     catch e
-      if not e instanceof error and not @negate
-        assert.fail("Expected error of #{error} kind; got: #{e}")
-      if @negate
-        assert.fail("Unexpected error of #{error} kind.")
+      unless @negate
+        assert.ok e instanceof error, "Expected error of #{error} kind; got: #{e}"
+      else
+        throw new assert.AssertionError "Did not expected an error of #{error} kind."
     this
 
-# Creates some common aliases...
-(alias = (dict) ->
+# Used to define `Expectation.prototype` aliases. This is really useful because
+# you can define the verbosity of the expectation, depending of the context.
+exports.Expectation.alias = (dict) ->
   for name, aliases of dict
-    Expectation::[as] = Expectation::[name] for as in aliases
-)
-  beEqual: ['beEqualOf', 'beEqualTo' , 'be']
-  beAnInstanceOf: ['beInstanceOf', 'beA']
-  haveProperty: ['havePropertyOf', 'have']
-  haveLength: ['haveLengthOf']
-  raise: ['throw', 'throws']
+    exports.Expectation::[as] = exports.Expectation::[name] for as in aliases
 
 # Parses a `directive` into a method call. Returns self if none given.
 #
@@ -117,7 +125,7 @@ class Expectation
 # points to a camel cased method and a parameter to call it with. Since there
 # can be more then one method matching a given `directive`, we will always call
 # the longest one we match.
-Expectation::to = (directive) ->
+exports.Expectation::to = (directive) ->
   # Supports ``expect(object).to().beEqual(another)``.
   return this unless directive?
 
@@ -132,7 +140,7 @@ Expectation::to = (directive) ->
       possibilities[method] = directive if @[method]?
 
   if keys(possibilities).length is 0
-    throw TypeError "No suitible directive found: #{inspect directive}"
+    throw TypeError "No suitable directive found: #{inspect directive}"
 
   # Call the longest one of them.
   longest = (keys(possibilities).sort (lhs, rhs) ->
@@ -141,9 +149,6 @@ Expectation::to = (directive) ->
 
   @[longest](possibilities[longest])
  
-# Provide public access for monkey patching.
-exports.Expectation = Expectation
-
 # Create an expectation for the `target`. This is actually the main function
 # that we'll be using. The `target`
 exports.expect = (target) ->
@@ -153,5 +158,13 @@ exports.expect = (target) ->
 # after `expect`.
 exports.dontExpect = (target) ->
   new exports.Expectation target, negate: true
+
+# Now we define some common aliases.
+exports.Expectation.alias
+  beEqual: ['beEqualOf', 'beEqualTo' , 'be']
+  beAnInstanceOf: ['beInstanceOf', 'beA']
+  haveProperty: ['havePropertyOf', 'have']
+  haveLength: ['haveLengthOf']
+  raise: ['throw', 'throws']
 
 # Have fun.
