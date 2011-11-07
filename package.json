@@ -1,6 +1,6 @@
 { "name": "moodswing"
 , "description": "Node.js testing framework for that time of the software development cycle."
-, "version": "0.1.1"
+, "version": "0.1.2"
 , "author": "Genadi Samokovarov <gsamokovarov@gmail.com>"
 , "keywords": ["test", "expect", "coffeescript"]
 , "main": "./lib/moodswing.js"

@@ -1,17 +1,25 @@
 {expect, dontExpect, Expectation} = require '../lib/moodswing'
-puts = console.log
 
-test = (fn) ->
-  require('assert').doesNotThrow(fn)
+test = (desc, fn) ->
+  unless fn?
+    fn = desc
+    desc = null
 
-test ->
+  try
+    require('assert').doesNotThrow(fn)
+  catch err
+    # The ternary operator does not work here! 
+    console.log "Failure in test #{if desc? then desc else "unknown block"}..."
+    throw err
+
+test "that equals works", ->
   expect(true).to be: true
   expect(true).to be: equal: true
   expect(true).to be: equal: of: true
   dontExpect(true).to be: equal: to: false
   dontExpect(false).to be: true
 
-test ->
+test "that property checking works", ->
   expect([]).to have: 'length'
   expect([]).to have: property: 'length'
   expect([]).to have: property: of: 'length'
@@ -21,7 +29,11 @@ test ->
   dontExpect({}).to have: property: 'length'
   dontExpect({}).to have: property: of: 'length'
 
-test ->
+test "that expectations can be functions", ->
+  expect(-> true).to be: true
+  expect(-> false or true).to be: true
+
+test "that expectations can handle errors", ->
   expect(-> throw new Error).to raise: Error
   expect(-> throw new Error).to throw: Error
   expect(-> throw new Error).to throws: Error
@@ -29,12 +41,12 @@ test ->
   dontExpect(-> null).to throw: Error
   dontExpect(-> null).to throws: Error
 
-test ->
+test "that expectations can check for instances", ->
   expect({}).to be: a: Object
   expect({}).to be: instance: of: Object
   expect({}).to be: an: instance: of: Object
 
-test ->
+test "that aliasing delegates correctly", ->
   expect(Expectation::).to have: 'have'
   expect(Expectation::).to have: 'haveProperty'
   expect(Expectation::).to have: 'havePropertyOf'

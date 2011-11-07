@@ -10,7 +10,7 @@
 # [CoffeeScript](http://jashkenas.github.com/coffee-script/) object
 # [literal](http://jashkenas.github.com/coffee-script/#literals) syntax. For
 # example the line ``expect([]).to have: length: of: 0`` is equal to the call
-# ``(new Expectation []).haveLengthOf(0)``.
+# ``new Expectation([]).haveLengthOf(0)``.
 #
 # This means that the object ``have: length: of: 0``, which we call a
 #  _directive_, is translated to a method named ``haveLengthOf`` using
@@ -50,11 +50,6 @@ assert = require 'assert'
 keys = (something) ->
   Object.keys(Object something)
 
-# Takes the first object from an object or array named.
-first = (it) ->
-  return it[0] if Array.isArray(it) or typeof it is 'string'
-  it[keys(it)[0]]
-
 # Capitalizes a string.
 capitalize = (str) ->
   "#{str[0].toUpperCase()}#{str[1...]}"
@@ -66,8 +61,12 @@ capitalize = (str) ->
 # The expectation object is responsible for the assertions behavior. All of the
 # assertions pointed by the directives are living in its prototype.
 class exports.Expectation
-  constructor: (@target, options = {}) ->
+  constructor: (target, options = {}) ->
     @negate = options.negate or false
+    Object.defineProperty @, 'target'
+      get: ->
+        return target unless typeof target is "function"
+        target()
 
   # Assert `@target` to be equal to `other` object.
   beEqual: (other) ->
@@ -105,7 +104,7 @@ class exports.Expectation
   # Assert `@target` to raise an `error` of the kind.
   raise: (error) ->
     try
-      @target()
+      @target
     catch e
       unless @negate
         assert.ok e instanceof error, "Expected error of #{error} kind; got: #{e}"
