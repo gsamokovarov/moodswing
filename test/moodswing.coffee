@@ -16,8 +16,16 @@ test "that equals works", ->
   expect(true).to be: true
   expect(true).to be: equal: true
   expect(true).to be: equal: of: true
+  expect(undefined).to be: null
   dontExpect(true).to be: equal: to: false
   dontExpect(false).to be: true
+
+test "that strict equals works", ->
+  expect(true).to be: strictly: true
+  dontExpect(undefined).to be: strictly: null
+
+test "that deep equals works", ->
+  expect({}).to be: deeply: {}
 
 test "that property checking works", ->
   expect([]).to have: 'length'
@@ -46,6 +54,9 @@ test "that expectations can check for instances", ->
   expect({}).to be: instance: of: Object
   expect({}).to be: an: instance: of: Object
 
+test "that ::to won't call directives starting with 'to'", ->
+  expect(-> expect(->).to to: 'choke').to raise: TypeError
+
 test "that aliasing delegates correctly", ->
   expect(Expectation::).to have: 'have'
   expect(Expectation::).to have: 'haveProperty'
@@ -55,6 +66,16 @@ test "that aliasing delegates correctly", ->
   expect(Expectation::).to have: 'beEqual'
   expect(Expectation::).to have: 'beEqualOf'
   expect(Expectation::).to have: 'beEqualTo'
+
+  expect(Expectation::).to have: 'beStrictly'
+  expect(Expectation::).to have: 'beStrictlyEqualTo'
+  expect(Expectation::).to have: 'beStrictlyEqualOf'
+  expect(Expectation::).to have: 'beStrictlyEqual'
+
+  expect(Expectation::).to have: 'beDeeply'
+  expect(Expectation::).to have: 'beDeeplyEqualTo'
+  expect(Expectation::).to have: 'beDeeplyEqualOf'
+  expect(Expectation::).to have: 'beDeeplyEqual'
 
   expect(Expectation::).to have: 'raise'
   expect(Expectation::).to have: 'throw'

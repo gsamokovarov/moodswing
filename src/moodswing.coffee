@@ -76,6 +76,22 @@ class exports.Expectation
       assert.notEqual @target, other
     this
 
+  # Assert `@target` to be strictly equal to `other` object.
+  beStrictly: (other) ->
+    unless @negate
+      assert.strictEqual @target, other
+    else
+      assert.notStrictEqual @target, other
+    this
+
+  # Assert `@target` to be deeply equal to `other` object.
+  beDeeply: (other) ->
+    unless @negate
+      assert.deepEqual @target, other
+    else
+      assert.notDeepEqual @target, other
+    this
+
   # Assert `@target` to be an instance of `kind`.
   beAnInstanceOf: (kind) ->
     unless @negate
@@ -127,6 +143,8 @@ exports.Expectation.alias = (dict) ->
 exports.Expectation::to = (directive) ->
   # Supports ``expect(object).to().beEqual(another)``.
   return this unless directive?
+  # Help preventing the function to call itself.
+  throw new TypeError "Can not start a directive with 'to'" if directive.to?
 
   possibilities = {}
 
@@ -142,8 +160,8 @@ exports.Expectation::to = (directive) ->
     throw TypeError "No suitable directive found: #{inspect directive}"
 
   # Call the longest one of them.
-  longest = (keys(possibilities).sort (lhs, rhs) ->
-    lhs.length - rhs.length
+  longest = (keys(possibilities).sort (left, right) ->
+    left.length - right.length
   ).pop()
 
   @[longest](possibilities[longest])
@@ -161,6 +179,8 @@ exports.dontExpect = (target) ->
 # Now we define some common aliases.
 exports.Expectation.alias
   beEqual: ['beEqualOf', 'beEqualTo' , 'be']
+  beStrictly: ['beStrictlyEqualOf', 'beStrictlyEqualTo' , 'beStrictlyEqual']
+  beDeeply: ['beDeeplyEqualOf', 'beDeeplyEqualTo' , 'beDeeplyEqual']
   beAnInstanceOf: ['beInstanceOf', 'beA']
   haveProperty: ['havePropertyOf', 'have']
   haveLength: ['haveLengthOf']
