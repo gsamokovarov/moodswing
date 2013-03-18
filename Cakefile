@@ -10,8 +10,7 @@ task 'compile', 'Compiles the project to JS.', (options) ->
 task 'document', 'Uses docco to annotate the source', (options) ->
   puts 'Documenting...'
 
-  sh "docco src/*.coffee"
-
+  sh "docco --layout linear src/*.coffee"
 
 task 'test', 'Tests the library.', (options) ->
   invoke 'compile'
@@ -31,4 +30,3 @@ sh = (cmd) ->
       puts [output, error].join '\n' if output or error
 
 process.on 'SIGHUP', -> sh.last?.kill()
-
