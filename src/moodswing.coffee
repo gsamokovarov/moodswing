@@ -1,12 +1,10 @@
 # **Moodswing** uses [CoffeeScript](http://jashkenas.github.com/coffee-script/)
 # to provide assertions which can look like English sentences.
 #
-#```coffeescript
 #     expect(true).to be: true
 #     expect([]).to have: length: of: 0
 #     dontExpect(-> null).to raise: Error
 #     dontExpect('this').to be: equal: to: 'that'
-#```
 #
 # This is possible because of the
 # [CoffeeScript](http://jashkenas.github.com/coffee-script/) object
