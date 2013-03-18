@@ -1,109 +1,291 @@
-<!DOCTYPE html>  <html> <head>   <title>moodswing.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               moodswing.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><strong>Moodswing</strong> uses <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>
-to provide assertions which can look like English sentences.</p>
+<!DOCTYPE html>
 
+<html>
+<head>
+  <title>moodswing.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>moodswing.coffee</h1>
+        
+
+        
+      </div>
+
+      
+        
+        <p><strong>Moodswing</strong> uses <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>
+to provide assertions which can look like English sentences.</p>
 <pre><code>expect(true).to be: true
 expect([]).to have: length: of: 0
 dontExpect(-&gt; null).to raise: Error
-dontExpect('this').to be: equal: to: 'that'
-</code></pre>
-
+dontExpect(&#39;this&#39;).to be: equal: to: &#39;that&#39;</code></pre>
 <p>This is possible because of the
 <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a> object
 <a href="http://jashkenas.github.com/coffee-script/#literals">literal</a> syntax. For
 example the line <code>expect([]).to have: length: of: 0</code> is equal to the call
 <code>new Expectation([]).haveLengthOf(0)</code>.</p>
-
 <p>This means that the object <code>have: length: of: 0</code>, which we call a
  <em>directive</em>, is translated to a method named <code>haveLengthOf</code> using
 camel case notation. This method is then looked for in the 
 <code>Expectation.prototype</code> and is being called with the <em>reminder</em> of the 
 object.</p>
-
 <p>The <code>Expectation</code> constructor is publicly available, so you can augment its
 prototype with your own directives.</p>
-
 <p>You can install moodswing through <a href="http://npmjs.org">NPM</a></p>
-
-<pre><code>npm install moodswing
-</code></pre>
-
+<pre><code>npm install moodswing</code></pre>
 <p>To use moodswing just require it in your tests</p>
-
-<pre><code>{expect, dontExpect, Expectation} = require 'moodswing'
-</code></pre>
-
+<pre><code>{expect, dontExpect, Expectation} = require &#39;moodswing&#39;</code></pre>
 <p>The code is available on <a href="http://github.com/gsamokovarov/moodswing">github</a>
-under MIT license. </p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>Prerequisites</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Require <code>inspect</code> for prettier object printings.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">{</span><span class="nx">inspect</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span> <span class="s1">&#39;util&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Require the standard <a href="https://nodejs.org">node</a> assertion module for most of our <em>low level</em>
-assertions. This gives us the nice benefit to be able to run our tests on
-<a href="http://visionmedia.github.com/expresso/">expresso</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">assert = </span><span class="nx">require</span> <span class="s1">&#39;assert&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h3>Internal utilities</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Before we begin we define some helpful utilities, which would be used
-through the project implementation.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Primitive safe <code>Object.keys</code> implementation.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">keys = </span><span class="nf">(something) -&gt;</span>
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nb">Object</span> <span class="nx">something</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Capitalizes a string.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">capitalize = </span><span class="nf">(str) -&gt;</span>
-  <span class="s2">&quot;#{str[0].toUpperCase()}#{str[1...]}&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h3>Public exports</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Now we start to implement the portion that would be exported to the user.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>The expectation object is responsible for the assertions behavior. All of the
-assertions pointed by the directives are living in its prototype.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span>
-  <span class="nv">constructor: </span><span class="nf">(target, options = {}) -&gt;</span>
-    <span class="vi">@negate = </span><span class="nx">options</span><span class="p">.</span><span class="nx">negate</span> <span class="o">or</span> <span class="kc">false</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span> <span class="err">@</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span>
-      <span class="nv">get: </span><span class="o">-&gt;</span>
-        <span class="k">return</span> <span class="nx">target</span> <span class="nx">unless</span> <span class="k">typeof</span> <span class="nx">target</span> <span class="o">is</span> <span class="s2">&quot;function&quot;</span>
-        <span class="nx">target</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Assert <code>@target</code> to be equal to <code>other</code> object.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">beEqual: </span><span class="nf">(other) -&gt;</span>
-    <span class="nx">unless</span> <span class="nx">@negate</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span> <span class="nx">@target</span><span class="p">,</span> <span class="nx">other</span>
-    <span class="k">else</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">notEqual</span> <span class="nx">@target</span><span class="p">,</span> <span class="nx">other</span>
-    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Assert <code>@target</code> to be an instance of <code>kind</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">beAnInstanceOf: </span><span class="nf">(kind) -&gt;</span>
-    <span class="nx">unless</span> <span class="nx">@negate</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">ok</span> <span class="nx">@target</span> <span class="k">instanceof</span> <span class="nx">kind</span><span class="p">,</span> <span class="s2">&quot;Expected #{@target} to be an instance of #{kind}&quot;</span>
-    <span class="k">else</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">ok</span> <span class="o">!</span><span class="p">(</span><span class="nx">@target</span> <span class="k">instanceof</span> <span class="nx">kind</span><span class="p">),</span> <span class="s2">&quot;Did not expected #{@target} to be and instance of #{kind}&quot;</span>
-    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Assert <code>@target</code> have a property <code>name</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">haveProperty: </span><span class="nf">(name) -&gt;</span>
-    <span class="nx">unless</span> <span class="nx">@negate</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">ok</span> <span class="nx">@target</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span><span class="o">?</span><span class="p">,</span> <span class="s2">&quot;Expected property #{name} in #{inspect @target}&quot;</span>
-    <span class="k">else</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">ok</span> <span class="o">not</span> <span class="nx">@target</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span><span class="o">?</span><span class="p">,</span> <span class="s2">&quot;Did not expected a property #{name} in #{inspect @target}&quot;</span>
-    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Assert <code>@target</code> have property <code>length</code> of <code>len</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">haveLength: </span><span class="nf">(len) -&gt;</span>
-    <span class="nx">@haveProperty</span> <span class="s1">&#39;length&#39;</span>
-    <span class="nx">unless</span> <span class="nx">@negate</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span> <span class="nx">@target</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">len</span>
-    <span class="k">else</span>
-      <span class="nx">assert</span><span class="p">.</span><span class="nx">notEqual</span> <span class="nx">@target</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">len</span>
-    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Assert <code>@target</code> to raise an <code>error</code> of the kind.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">raise: </span><span class="nf">(error) -&gt;</span>
-    <span class="k">try</span>
-      <span class="nx">@target</span>
-    <span class="k">catch</span> <span class="nx">e</span>
-      <span class="nx">unless</span> <span class="nx">@negate</span>
-        <span class="nx">assert</span><span class="p">.</span><span class="nx">ok</span> <span class="nx">e</span> <span class="k">instanceof</span> <span class="nx">error</span><span class="p">,</span> <span class="s2">&quot;Expected error of #{error} kind; got: #{e}&quot;</span>
-      <span class="k">else</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">assert</span><span class="p">.</span><span class="nx">AssertionError</span> <span class="s2">&quot;Did not expected an error of #{error} kind.&quot;</span>
-    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Used to define <code>Expectation.prototype</code> aliases. This is really useful because
-you can define the verbosity of the expectation, depending of the context.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.Expectation.alias = </span><span class="nf">(dict) -&gt;</span>
-  <span class="k">for</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">aliases</span> <span class="k">of</span> <span class="nx">dict</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span><span class="o">::</span><span class="p">[</span><span class="nx">as</span><span class="p">]</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span><span class="o">::</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="k">for</span> <span class="nx">as</span> <span class="k">in</span> <span class="nx">aliases</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Parses a <code>directive</code> into a method call. Returns self if none given.</p>
+under MIT license. </p>
+<h3>Prerequisites</h3>
+<p>Require <code>inspect</code> for prettier object printings.</p>
 
+        
+          <div class='highlight'><pre>{inspect} = require <span class="string">'util'</span></pre></div>
+        
+      
+        
+        <p>Require the standard <a href="https://nodejs.org">node</a> assertion module for most of our <em>low level</em>
+assertions. This gives us the nice benefit to be able to run our tests on
+<a href="http://visionmedia.github.com/expresso/">expresso</a>.</p>
+
+        
+          <div class='highlight'><pre>assert = require <span class="string">'assert'</span></pre></div>
+        
+      
+        
+        <h3>Internal utilities</h3>
+<p>Before we begin we define some helpful utilities, which would be used
+through the project implementation.</p>
+<p>Primitive safe <code>Object.keys</code> implementation.</p>
+
+        
+          <div class='highlight'><pre><span class="function"><span class="title">keys</span></span> = (something) -&gt;
+  Object.keys(Object something)</pre></div>
+        
+      
+        
+        <p>Capitalizes a string.</p>
+
+        
+          <div class='highlight'><pre><span class="function"><span class="title">capitalize</span></span> = (str) -&gt;
+  <span class="string">"<span class="subst">#{str[<span class="number">0</span>].toUpperCase()}</span><span class="subst">#{str[<span class="number">1.</span>..]}</span>"</span></pre></div>
+        
+      
+        
+        <h3>Public exports</h3>
+<p>Now we start to implement the portion that would be exported to the user.</p>
+<p>The expectation object is responsible for the assertions behavior. All of the
+assertions pointed by the directives are living in its prototype.</p>
+
+        
+          <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Expectation</span></span>
+  constructor: (target, options = {}) -&gt;
+    <span class="property">@negate</span> = options.negate <span class="keyword">or</span> <span class="literal">false</span>
+    Object.defineProperty @, <span class="string">'target'</span>
+      get: -&gt;
+        <span class="keyword">return</span> target <span class="keyword">unless</span> <span class="keyword">typeof</span> target <span class="keyword">is</span> <span class="string">"function"</span>
+        target()</pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> to be equal to <code>other</code> object.</p>
+
+        
+          <div class='highlight'><pre>  beEqual: (other) -&gt;
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.equal <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.notEqual <span class="property">@target</span>, other
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> to be strictly equal to <code>other</code> object.</p>
+
+        
+          <div class='highlight'><pre>  beStrictly: (other) -&gt;
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.strictEqual <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.notStrictEqual <span class="property">@target</span>, other
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> to be deeply equal to <code>other</code> object.</p>
+
+        
+          <div class='highlight'><pre>  beDeeply: (other) -&gt;
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.deepEqual <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.notDeepEqual <span class="property">@target</span>, other
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> to be an instance of <code>kind</code>.</p>
+
+        
+          <div class='highlight'><pre>  beAnInstanceOf: (kind) -&gt;
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.ok <span class="property">@target</span> <span class="keyword">instanceof</span> kind, <span class="string">"Expected <span class="subst">#{@target}</span> to be an instance of <span class="subst">#{kind}</span>"</span>
+    <span class="keyword">else</span>
+      assert.ok !(<span class="property">@target</span> <span class="keyword">instanceof</span> kind), <span class="string">"Did not expected <span class="subst">#{@target}</span> to be and instance of <span class="subst">#{kind}</span>"</span>
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> have a property <code>name</code>.</p>
+
+        
+          <div class='highlight'><pre>  haveProperty: (name) -&gt;
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.ok <span class="property">@target</span>[name]?, <span class="string">"Expected property <span class="subst">#{name}</span> in <span class="subst">#{inspect @target}</span>"</span>
+    <span class="keyword">else</span>
+      assert.ok <span class="keyword">not</span> <span class="property">@target</span>[name]?, <span class="string">"Did not expected a property <span class="subst">#{name}</span> in <span class="subst">#{inspect @target}</span>"</span>
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> have property <code>length</code> of <code>len</code>.</p>
+
+        
+          <div class='highlight'><pre>  haveLength: (len) -&gt;
+    <span class="property">@haveProperty</span> <span class="string">'length'</span>
+    <span class="keyword">unless</span> <span class="property">@negate</span>
+      assert.equal <span class="property">@target</span>.length, len
+    <span class="keyword">else</span>
+      assert.notEqual <span class="property">@target</span>.length, len
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Assert <code>@target</code> to raise an <code>error</code> of the kind.</p>
+
+        
+          <div class='highlight'><pre>  raise: (error) -&gt;
+    <span class="keyword">try</span>
+      <span class="property">@target</span>
+    <span class="keyword">catch</span> e
+      <span class="keyword">unless</span> <span class="property">@negate</span>
+        assert.ok e <span class="keyword">instanceof</span> error, <span class="string">"Expected error of <span class="subst">#{error}</span> kind; got: <span class="subst">#{e}</span>"</span>
+      <span class="keyword">else</span>
+        <span class="keyword">throw</span> <span class="keyword">new</span> assert.AssertionError <span class="string">"Did not expected an error of <span class="subst">#{error}</span> kind."</span>
+    <span class="keyword">this</span></pre></div>
+        
+      
+        
+        <p>Used to define <code>Expectation.prototype</code> aliases. This is really useful because
+you can define the verbosity of the expectation, depending of the context.</p>
+
+        
+          <div class='highlight'><pre>exports.Expectation.<span class="function"><span class="title">alias</span></span> = (dict) -&gt;
+  <span class="keyword">for</span> name, aliases <span class="keyword">of</span> dict
+    exports.Expectation::[as] = exports.Expectation::[name] <span class="keyword">for</span> as <span class="keyword">in</span> aliases</pre></div>
+        
+      
+        
+        <p>Parses a <code>directive</code> into a method call. Returns self if none given.</p>
 <p>A <code>directive</code> is an deep object of the kind <code>be: equal: to: true</code> which
 points to a camel cased method and a parameter to call it with. Since there
 can be more then one method matching a given <code>directive</code>, we will always call
-the longest one we match.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.Expectation::to = </span><span class="nf">(directive) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Supports <code>expect(object).to().beEqual(another)</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">return</span> <span class="k">this</span> <span class="nx">unless</span> <span class="nx">directive</span><span class="o">?</span>
+the longest one we match.</p>
 
-  <span class="nv">possibilities = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Find all the methods pointed by the directive.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">method = </span><span class="k">new</span> <span class="nb">String</span>
-  <span class="k">while</span> <span class="nx">keys</span><span class="p">(</span><span class="nx">directive</span><span class="p">).</span><span class="nx">length</span> <span class="o">isnt</span> <span class="mi">0</span>
-    <span class="k">break</span> <span class="nx">unless</span> <span class="k">typeof</span> <span class="nx">directive</span> <span class="o">is</span> <span class="s1">&#39;object&#39;</span>
-    <span class="k">for</span> <span class="nx">part</span><span class="p">,</span> <span class="nx">directive</span> <span class="k">of</span> <span class="nx">directive</span>
-      <span class="nx">method</span> <span class="o">+=</span> <span class="k">if</span> <span class="nx">method</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span> <span class="k">then</span> <span class="nx">part</span> <span class="k">else</span> <span class="nx">capitalize</span> <span class="nx">part</span>
-      <span class="nx">possibilities</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="nx">directive</span> <span class="k">if</span> <span class="err">@</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span><span class="o">?</span>
+        
+          <div class='highlight'><pre>exports.Expectation::<span class="function"><span class="title">to</span></span> = (directive) -&gt;</pre></div>
+        
+      
+        
+        <p>Supports <code>expect(object).to().beEqual(another)</code>.</p>
 
-  <span class="k">if</span> <span class="nx">keys</span><span class="p">(</span><span class="nx">possibilities</span><span class="p">).</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
-    <span class="k">throw</span> <span class="nx">TypeError</span> <span class="s2">&quot;No suitable directive found: #{inspect directive}&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Call the longest one of them.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">longest = </span><span class="p">(</span><span class="nx">keys</span><span class="p">(</span><span class="nx">possibilities</span><span class="p">).</span><span class="nx">sort</span> <span class="nf">(lhs, rhs) -&gt;</span>
-    <span class="nx">lhs</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">rhs</span><span class="p">.</span><span class="nx">length</span>
-  <span class="p">).</span><span class="nx">pop</span><span class="p">()</span>
+        
+          <div class='highlight'><pre>  <span class="keyword">return</span> <span class="keyword">this</span> <span class="keyword">unless</span> directive?</pre></div>
+        
+      
+        
+        <p>Help preventing the function to call itself.</p>
 
-  <span class="err">@</span><span class="p">[</span><span class="nx">longest</span><span class="p">](</span><span class="nx">possibilities</span><span class="p">[</span><span class="nx">longest</span><span class="p">])</span>
- </pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Create an expectation for the <code>target</code>. This is actually the main function
-that we'll be using. The <code>target</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.expect = </span><span class="nf">(target) -&gt;</span>
-  <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span> <span class="nx">target</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Create an negated expectation for the <code>target</code>. The second most used function
-after <code>expect</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.dontExpect = </span><span class="nf">(target) -&gt;</span>
-  <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span> <span class="nx">target</span><span class="p">,</span> <span class="nv">negate: </span><span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Now we define some common aliases.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">Expectation</span><span class="p">.</span><span class="nx">alias</span>
-  <span class="nv">beEqual: </span><span class="p">[</span><span class="s1">&#39;beEqualOf&#39;</span><span class="p">,</span> <span class="s1">&#39;beEqualTo&#39;</span> <span class="p">,</span> <span class="s1">&#39;be&#39;</span><span class="p">]</span>
-  <span class="nv">beAnInstanceOf: </span><span class="p">[</span><span class="s1">&#39;beInstanceOf&#39;</span><span class="p">,</span> <span class="s1">&#39;beA&#39;</span><span class="p">]</span>
-  <span class="nv">haveProperty: </span><span class="p">[</span><span class="s1">&#39;havePropertyOf&#39;</span><span class="p">,</span> <span class="s1">&#39;have&#39;</span><span class="p">]</span>
-  <span class="nv">haveLength: </span><span class="p">[</span><span class="s1">&#39;haveLengthOf&#39;</span><span class="p">]</span>
-  <span class="nv">raise: </span><span class="p">[</span><span class="s1">&#39;throw&#39;</span><span class="p">,</span> <span class="s1">&#39;throws&#39;</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Have fun.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+        
+          <div class='highlight'><pre>  <span class="keyword">throw</span> <span class="keyword">new</span> TypeError <span class="string">"Can not start a directive with 'to'"</span> <span class="keyword">if</span> directive.to?
+
+  possibilities = {}</pre></div>
+        
+      
+        
+        <p>Find all the methods pointed by the directive.</p>
+
+        
+          <div class='highlight'><pre>  method = <span class="keyword">new</span> String
+  <span class="keyword">while</span> keys(directive).length <span class="keyword">isnt</span> <span class="number">0</span>
+    <span class="keyword">break</span> <span class="keyword">unless</span> <span class="keyword">typeof</span> directive <span class="keyword">is</span> <span class="string">'object'</span>
+    <span class="keyword">for</span> part, directive <span class="keyword">of</span> directive
+      method += <span class="keyword">if</span> method.length <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> part <span class="keyword">else</span> capitalize part
+      possibilities[method] = directive <span class="keyword">if</span> @[method]?
+
+  <span class="keyword">if</span> keys(possibilities).length <span class="keyword">is</span> <span class="number">0</span>
+    <span class="keyword">throw</span> TypeError <span class="string">"No suitable directive found: <span class="subst">#{inspect directive}</span>"</span></pre></div>
+        
+      
+        
+        <p>Call the longest one of them.</p>
+
+        
+          <div class='highlight'><pre>  <span class="function"><span class="title">longest</span></span> = (keys(possibilities).sort (left, right) -&gt;
+    left.length - right.length
+  ).pop()
+
+  @[longest](possibilities[longest])</pre></div>
+        
+      
+        
+        <p>Create an expectation for the <code>target</code>. This is actually the main function
+that we&#39;ll be using. The <code>target</code></p>
+
+        
+          <div class='highlight'><pre>exports.<span class="function"><span class="title">expect</span></span> = (target) -&gt;
+  <span class="keyword">new</span> exports.Expectation target</pre></div>
+        
+      
+        
+        <p>Create an negated expectation for the <code>target</code>. The second most used function
+after <code>expect</code>.</p>
+
+        
+          <div class='highlight'><pre>exports.<span class="function"><span class="title">dontExpect</span></span> = (target) -&gt;
+  <span class="keyword">new</span> exports.Expectation target, negate: <span class="literal">true</span></pre></div>
+        
+      
+        
+        <p>Now we define some common aliases.</p>
+
+        
+          <div class='highlight'><pre>exports.Expectation.alias
+  beEqual: [<span class="string">'beEqualOf'</span>, <span class="string">'beEqualTo'</span> , <span class="string">'be'</span>]
+  beStrictly: [<span class="string">'beStrictlyEqualOf'</span>, <span class="string">'beStrictlyEqualTo'</span> , <span class="string">'beStrictlyEqual'</span>]
+  beDeeply: [<span class="string">'beDeeplyEqualOf'</span>, <span class="string">'beDeeplyEqualTo'</span> , <span class="string">'beDeeplyEqual'</span>]
+  beAnInstanceOf: [<span class="string">'beInstanceOf'</span>, <span class="string">'beA'</span>]
+  haveProperty: [<span class="string">'havePropertyOf'</span>, <span class="string">'have'</span>]
+  haveLength: [<span class="string">'haveLengthOf'</span>]
+  raise: [<span class="string">'throw'</span>, <span class="string">'throws'</span>]</pre></div>
+        
+      
+        
+        <p>Have fun.</p>
+
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
