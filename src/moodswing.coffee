@@ -47,8 +47,6 @@ assert = require 'assert'
 # Public API
 # ----------
 
-# Now we start to implement the portion that would be exported to the user.
-
 # The expectation object is responsible for the assertions behavior. All of the
 # assertions pointed by the directives are living in its prototype.
 class exports.Expectation
@@ -179,9 +177,6 @@ exports.Expectation.alias
 
 # Helpers
 # -------
-
-# Before we begin we define some helpful utilities, which would be used
-# through the project implementation.
 
 # Primitive safe `Object.keys` implementation.
 keys = (something) ->
