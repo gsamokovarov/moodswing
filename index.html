@@ -23,10 +23,10 @@
         
         <p><strong>Moodswing</strong> uses <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>
 to provide assertions which can look like English sentences.</p>
-<pre><code>expect(true).to be: true
-expect([]).to have: length: of: 0
-dontExpect(-&gt; null).to raise: Error
-dontExpect(&#39;this&#39;).to be: equal: to: &#39;that&#39;</code></pre>
+<pre><code class="lang-coffeescript">    expect(true).to be: true
+    expect([]).to have: length: of: 0
+    dontExpect(-&gt; null).to raise: Error
+    dontExpect(&#39;this&#39;).to be: equal: to: &#39;that&#39;</code></pre>
 <p>This is possible because of the
 <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a> object
 <a href="http://jashkenas.github.com/coffee-script/#literals">literal</a> syntax. For
@@ -34,8 +34,8 @@ example the line <code>expect([]).to have: length: of: 0</code> is equal to the 
 <code>new Expectation([]).haveLengthOf(0)</code>.</p>
 <p>This means that the object <code>have: length: of: 0</code>, which we call a
  <em>directive</em>, is translated to a method named <code>haveLengthOf</code> using
-camel case notation. This method is then looked for in the 
-<code>Expectation.prototype</code> and is being called with the <em>reminder</em> of the 
+camel case notation. This method is then looked for in the
+<code>Expectation.prototype</code> and is being called with the <em>reminder</em> of the
 object.</p>
 <p>The <code>Expectation</code> constructor is publicly available, so you can augment its
 prototype with your own directives.</p>
@@ -44,9 +44,13 @@ prototype with your own directives.</p>
 <p>To use moodswing just require it in your tests</p>
 <pre><code>{expect, dontExpect, Expectation} = require &#39;moodswing&#39;</code></pre>
 <p>The code is available on <a href="http://github.com/gsamokovarov/moodswing">github</a>
-under MIT license. </p>
-<h3>Prerequisites</h3>
-<p>Require <code>inspect</code> for prettier object printings.</p>
+under MIT license.</p>
+<h2>Prerequisites</h2>
+
+        
+      
+        
+        <p>Require <code>inspect</code> for prettier object printings.</p>
 
         
           <div class='highlight'><pre>{inspect} = require <span class="string">'util'</span></pre></div>
@@ -62,27 +66,12 @@ assertions. This gives us the nice benefit to be able to run our tests on
         
       
         
-        <h3>Internal utilities</h3>
-<p>Before we begin we define some helpful utilities, which would be used
-through the project implementation.</p>
-<p>Primitive safe <code>Object.keys</code> implementation.</p>
+        <h2>Public API</h2>
 
-        
-          <div class='highlight'><pre><span class="function"><span class="title">keys</span></span> = (something) -&gt;
-  Object.keys(Object something)</pre></div>
         
       
         
-        <p>Capitalizes a string.</p>
-
-        
-          <div class='highlight'><pre><span class="function"><span class="title">capitalize</span></span> = (str) -&gt;
-  <span class="string">"<span class="subst">#{str[<span class="number">0</span>].toUpperCase()}</span><span class="subst">#{str[<span class="number">1.</span>..]}</span>"</span></pre></div>
-        
-      
-        
-        <h3>Public exports</h3>
-<p>Now we start to implement the portion that would be exported to the user.</p>
+        <p>Now we start to implement the portion that would be exported to the user.</p>
 <p>The expectation object is responsible for the assertions behavior. All of the
 assertions pointed by the directives are living in its prototype.</p>
 
@@ -90,7 +79,7 @@ assertions pointed by the directives are living in its prototype.</p>
           <div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">exports</span>.<span class="title">Expectation</span></span>
   constructor: (target, options = {}) -&gt;
     <span class="property">@negate</span> = options.negate <span class="keyword">or</span> <span class="literal">false</span>
-    Object.defineProperty @, <span class="string">'target'</span>
+    Object.defineProperty <span class="keyword">this</span>, <span class="string">'target'</span>,
       get: -&gt;
         <span class="keyword">return</span> target <span class="keyword">unless</span> <span class="keyword">typeof</span> target <span class="keyword">is</span> <span class="string">"function"</span>
         target()</pre></div>
@@ -101,10 +90,10 @@ assertions pointed by the directives are living in its prototype.</p>
 
         
           <div class='highlight'><pre>  beEqual: (other) -&gt;
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.equal <span class="property">@target</span>, other
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.notEqual <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.equal <span class="property">@target</span>, other
     <span class="keyword">this</span></pre></div>
         
       
@@ -113,10 +102,10 @@ assertions pointed by the directives are living in its prototype.</p>
 
         
           <div class='highlight'><pre>  beStrictly: (other) -&gt;
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.strictEqual <span class="property">@target</span>, other
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.notStrictEqual <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.strictEqual <span class="property">@target</span>, other
     <span class="keyword">this</span></pre></div>
         
       
@@ -125,10 +114,10 @@ assertions pointed by the directives are living in its prototype.</p>
 
         
           <div class='highlight'><pre>  beDeeply: (other) -&gt;
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.deepEqual <span class="property">@target</span>, other
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.notDeepEqual <span class="property">@target</span>, other
+    <span class="keyword">else</span>
+      assert.deepEqual <span class="property">@target</span>, other
     <span class="keyword">this</span></pre></div>
         
       
@@ -137,10 +126,10 @@ assertions pointed by the directives are living in its prototype.</p>
 
         
           <div class='highlight'><pre>  beAnInstanceOf: (kind) -&gt;
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.ok <span class="property">@target</span> <span class="keyword">instanceof</span> kind, <span class="string">"Expected <span class="subst">#{@target}</span> to be an instance of <span class="subst">#{kind}</span>"</span>
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.ok !(<span class="property">@target</span> <span class="keyword">instanceof</span> kind), <span class="string">"Did not expected <span class="subst">#{@target}</span> to be and instance of <span class="subst">#{kind}</span>"</span>
+    <span class="keyword">else</span>
+      assert.ok <span class="property">@target</span> <span class="keyword">instanceof</span> kind, <span class="string">"Expected <span class="subst">#{@target}</span> to be an instance of <span class="subst">#{kind}</span>"</span>
     <span class="keyword">this</span></pre></div>
         
       
@@ -149,10 +138,10 @@ assertions pointed by the directives are living in its prototype.</p>
 
         
           <div class='highlight'><pre>  haveProperty: (name) -&gt;
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.ok <span class="property">@target</span>[name]?, <span class="string">"Expected property <span class="subst">#{name}</span> in <span class="subst">#{inspect @target}</span>"</span>
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.ok <span class="keyword">not</span> <span class="property">@target</span>[name]?, <span class="string">"Did not expected a property <span class="subst">#{name}</span> in <span class="subst">#{inspect @target}</span>"</span>
+    <span class="keyword">else</span>
+      assert.ok <span class="property">@target</span>[name]?, <span class="string">"Expected property <span class="subst">#{name}</span> in <span class="subst">#{inspect @target}</span>"</span>
     <span class="keyword">this</span></pre></div>
         
       
@@ -162,10 +151,10 @@ assertions pointed by the directives are living in its prototype.</p>
         
           <div class='highlight'><pre>  haveLength: (len) -&gt;
     <span class="property">@haveProperty</span> <span class="string">'length'</span>
-    <span class="keyword">unless</span> <span class="property">@negate</span>
-      assert.equal <span class="property">@target</span>.length, len
-    <span class="keyword">else</span>
+    <span class="keyword">if</span> <span class="property">@negate</span>
       assert.notEqual <span class="property">@target</span>.length, len
+    <span class="keyword">else</span>
+      assert.equal <span class="property">@target</span>.length, len
     <span class="keyword">this</span></pre></div>
         
       
@@ -177,10 +166,10 @@ assertions pointed by the directives are living in its prototype.</p>
     <span class="keyword">try</span>
       <span class="property">@target</span>
     <span class="keyword">catch</span> e
-      <span class="keyword">unless</span> <span class="property">@negate</span>
-        assert.ok e <span class="keyword">instanceof</span> error, <span class="string">"Expected error of <span class="subst">#{error}</span> kind; got: <span class="subst">#{e}</span>"</span>
-      <span class="keyword">else</span>
+      <span class="keyword">if</span> <span class="property">@negate</span>
         <span class="keyword">throw</span> <span class="keyword">new</span> assert.AssertionError <span class="string">"Did not expected an error of <span class="subst">#{error}</span> kind."</span>
+      <span class="keyword">else</span>
+        assert.ok e <span class="keyword">instanceof</span> error, <span class="string">"Expected error of <span class="subst">#{error}</span> kind; got: <span class="subst">#{e}</span>"</span>
     <span class="keyword">this</span></pre></div>
         
       
@@ -277,6 +266,29 @@ after <code>expect</code>.</p>
   haveProperty: [<span class="string">'havePropertyOf'</span>, <span class="string">'have'</span>]
   haveLength: [<span class="string">'haveLengthOf'</span>]
   raise: [<span class="string">'throw'</span>, <span class="string">'throws'</span>]</pre></div>
+        
+      
+        
+        <h2>Helpers</h2>
+
+        
+      
+        
+        <p>Before we begin we define some helpful utilities, which would be used
+through the project implementation.</p>
+<p>Primitive safe <code>Object.keys</code> implementation.</p>
+
+        
+          <div class='highlight'><pre><span class="function"><span class="title">keys</span></span> = (something) -&gt;
+  Object.keys(Object something)</pre></div>
+        
+      
+        
+        <p>Capitalizes a string.</p>
+
+        
+          <div class='highlight'><pre><span class="function"><span class="title">capitalize</span></span> = (str) -&gt;
+  <span class="string">"<span class="subst">#{str[<span class="number">0</span>].toUpperCase()}</span><span class="subst">#{str[<span class="number">1.</span>..]}</span>"</span></pre></div>
         
       
         
